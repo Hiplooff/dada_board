@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { MessageBoard } from './components/message-board'
 import { MessageInput } from './components/message-input'
 import { supabase } from './lib/supabase'
-import './app.css'
+import './App.css'
 
 function App() {
   const [messages, setMessages] = useState([])
