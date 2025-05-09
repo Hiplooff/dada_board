@@ -364,72 +364,57 @@ export function MessageInput({ onSubmit }) {
           />
         </label>
         {selectedImage && previewImage && (
-          <img src={previewImage} alt="Preview" style={{ maxHeight: 60, borderRadius: 8, border: '1px solid #444' }} />
+          <img src={previewImage} alt="Preview" className="image-preview" />
         )}
         {selectedImage && (
-          <button type="button" className="button secondary" onClick={() => {
-            setSelectedImage(null)
-            setProcessedImage(null)
-            setPreviewImage(null)
-            setApplyMerzh(false)
-            setMerzhWidth(0)
-          }} disabled={isProcessing}>
-            <X />
-          </button>
+          <div className="merzh-controls">
+            <Button
+              type="button"
+              className={applyMerzh ? 'button' : 'button secondary'}
+              onClick={handleMerzhToggle}
+              disabled={isProcessing}
+              style={{ marginRight: 8 }}
+            >
+              merzh
+            </Button>
+            {applyMerzh && (
+              <>
+                <div className="merzh-label">PIXEL SIZE</div>
+                <div className="merzh-slider">
+                  <input
+                    type="range"
+                    min="1"
+                    max="32"
+                    value={merzhWidth}
+                    onChange={handleMerzhWidthChange}
+                    disabled={isProcessing}
+                  />
+                  <span className="slider-value">{merzhWidth}</span>
+                </div>
+                <div className="merzh-label">MERZH DIRECTION</div>
+                <div className="direction-toggle">
+                  <button
+                    type="button"
+                    className={merzhDirection === 'horizontal' ? 'selected' : ''}
+                    onClick={() => { setMerzhDirection('horizontal'); if (selectedImage) processImage(selectedImage); }}
+                    disabled={isProcessing}
+                  >
+                    <span>H</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={merzhDirection === 'vertical' ? 'selected' : ''}
+                    onClick={() => { setMerzhDirection('vertical'); if (selectedImage) processImage(selectedImage); }}
+                    disabled={isProcessing}
+                  >
+                    <span>V</span>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         )}
       </div>
-      {selectedImage && (
-        <div style={{ marginTop: 8 }}>
-          <button
-            type="button"
-            className={applyMerzh ? 'button' : 'button secondary'}
-            onClick={handleMerzhToggle}
-            disabled={isProcessing}
-            style={{ marginRight: 8 }}
-          >
-            merzh
-          </button>
-          {applyMerzh && (
-            <>
-              <input
-                type="range"
-                min="0"
-                max="32"
-                value={merzhWidth}
-                onChange={handleMerzhWidthChange}
-                className="input"
-                style={{ width: 120, verticalAlign: 'middle' }}
-                disabled={isProcessing}
-              />
-              <button type="button" className="button secondary" onClick={handleReset} disabled={isProcessing} style={{ marginLeft: 8 }}>
-                Reset
-              </button>
-              <div style={{ marginTop: 8 }}>
-                <label style={{ marginRight: 8 }}>
-                  <input
-                    type="radio"
-                    name="merzh-direction"
-                    value="horizontal"
-                    checked={merzhDirection === 'horizontal'}
-                    onChange={() => setMerzhDirection('horizontal')}
-                    disabled={isProcessing}
-                  /> Horizontal
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="merzh-direction"
-                    value="vertical"
-                    checked={merzhDirection === 'vertical'}
-                    onChange={() => setMerzhDirection('vertical')}
-                    disabled={isProcessing}
-                  /> Vertical
-                </label>
-              </div>
-            </>
-          )}
-        </div>
-      )}
       <button className="button" type="submit" disabled={isProcessing} style={{ marginTop: 12 }}>
         {isProcessing ? <Loader2 className="icon-spin" /> : <Send style={{ verticalAlign: 'middle' }} />} Post
       </button>

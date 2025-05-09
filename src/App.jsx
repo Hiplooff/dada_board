@@ -120,7 +120,7 @@ function App() {
       </div>
       {!showInput && (
         <button className="fab" onClick={() => setShowInput(true)} title="Post a message">
-          +
+          <span>+</span>
         </button>
       )}
       {showInput && (
