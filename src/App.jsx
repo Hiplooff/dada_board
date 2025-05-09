@@ -3,7 +3,7 @@ import { MessageBoard } from './components/message-board'
 import { MessageInput } from './components/message-input'
 import { supabase } from './lib/supabase'
 
-export function App() {
+function App() {
   const [messages, setMessages] = useState([])
   const [error, setError] = useState(null)
 
@@ -121,3 +121,5 @@ export function App() {
     </div>
   )
 }
+
+export default App
