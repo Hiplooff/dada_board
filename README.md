@@ -1,50 +1,58 @@
-# Dada Board
+# DADA Board
 
-A digital message board inspired by Dada art movement, featuring black and white image processing with merzh effect.
+<!-- Trigger clean build for Vercel -->
+
+A real-time collaborative message board inspired by Dadaist art and poetry. Built with React, Vite, and Supabase.
 
 ## Features
 
-- Post messages with text and images
-- Convert images to black and white
-- Apply merzh effect to images (horizontal line shuffling)
-- Adjust merzh effect line width
-- Real-time preview of image processing
+- Real-time message updates
+- Dadaist-inspired typography with Merzh effect
+- Image upload support
 - Responsive design
+- Dark mode
 
 ## Tech Stack
 
-- React
-- Vite
+- React + Vite
 - Tailwind CSS
-- date-fns
+- Supabase (Database & Real-time)
+- Vercel (Deployment)
 
-## Development
+## Local Development
 
-1. Install dependencies:
+1. Clone the repository:
+```bash
+git clone https://github.com/Hiplooff/dada_board.git
+cd dada_board
+```
+
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Start development server:
+3. Create a `.env` file in the root directory with your Supabase credentials:
+```
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+4. Start the development server:
 ```bash
 npm run dev
 ```
 
-3. Build for production:
-```bash
-npm run build
-```
-
 ## Deployment
 
-The project can be deployed to any static hosting service like Vercel, Netlify, or GitHub Pages.
+This project is configured for deployment on Vercel. The deployment process is automated through GitHub integration.
 
-1. Build the project:
-```bash
-npm run build
-```
+## Environment Variables
 
-2. Deploy the contents of the `dist` directory to your hosting service.
+The following environment variables are required:
+
+- `VITE_SUPABASE_URL`: Your Supabase project URL
+- `VITE_SUPABASE_ANON_KEY`: Your Supabase anonymous key
 
 ## License
 
