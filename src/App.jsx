@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { MessageBoard } from './components/message-board'
 import { MessageInput } from './components/message-input'
 import { supabase } from './lib/supabase'
+import './app.css'
 
 function App() {
   const [messages, setMessages] = useState([])
   const [error, setError] = useState(null)
+  const [showInput, setShowInput] = useState(false)
 
   // Initial messages
   const initialMessages = [
@@ -98,6 +100,7 @@ function App() {
       if (error) throw error
 
       setMessages(current => [data[0], ...current])
+      setShowInput(false)
     } catch (error) {
       setError('Error posting message')
       console.error('Error:', error)
@@ -105,19 +108,29 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-4">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <h1 className="text-4xl font-mono uppercase tracking-wider text-center">
-          DADA BOARD
-        </h1>
-        {error && (
-          <div className="text-red-500 text-center font-mono">
-            {error}
-          </div>
-        )}
-        <MessageInput onSubmit={handleSubmit} />
+    <div>
+      <h1>DADA BOARD</h1>
+      {error && (
+        <div className="error-message">
+          {error}
+        </div>
+      )}
+      <div className="board-container">
         <MessageBoard messages={messages} />
       </div>
+      {!showInput && (
+        <button className="fab" onClick={() => setShowInput(true)} title="Post a message">
+          +
+        </button>
+      )}
+      {showInput && (
+        <div className="popup-input">
+          <MessageInput onSubmit={handleSubmit} />
+          <button className="button secondary" onClick={() => setShowInput(false)}>
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   )
 }

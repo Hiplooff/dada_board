@@ -28,6 +28,7 @@ export function MessageInput({ onSubmit }) {
   const [applyMerzh, setApplyMerzh] = useState(false)
   const [merzhWidth, setMerzhWidth] = useState(0)
   const [error, setError] = useState(null)
+  const [merzhDirection, setMerzhDirection] = useState('horizontal')
 
   // Rate limiting state
   const [messageCount, setMessageCount] = useState(0)
@@ -161,7 +162,8 @@ export function MessageInput({ onSubmit }) {
         content: sanitizedContent,
         author: sanitizedAuthor,
         image_url: imageUrl,
-        merzh_width: merzhWidth
+        merzh_width: merzhWidth,
+        merzh_direction: merzhDirection
       }
       
       console.log('Submitting message data:', messageData)
@@ -184,8 +186,8 @@ export function MessageInput({ onSubmit }) {
 
   const processImage = async (imageData) => {
     try {
-      // Process image once at full size
-      const processed = await processImageCollage(imageData, '', 0, false, applyMerzh, merzhWidth)
+      // Pass direction to the processor
+      const processed = await processImageCollage(imageData, '', 0, false, applyMerzh, merzhWidth, merzhDirection)
       
       // Create a preview by scaling down the processed image
       const img = new Image()
@@ -330,156 +332,107 @@ export function MessageInput({ onSubmit }) {
   }
 
   return (
-    <div className="bg-black border border-white/50 p-4 shadow-lg backdrop-blur-sm">
-      <form onSubmit={handleSubmit} className="space-y-3">
-        {error && (
-          <div className="text-red-500 text-sm font-mono">
-            {error}
-          </div>
-        )}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex-1">
-            <label htmlFor="author" className="text-sm font-mono uppercase tracking-wider text-white/80 block mb-1">
-              FROM:
-            </label>
-            <Input
-              id="author"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-              placeholder="..."
-              className="mt-1 bg-black border-white/50 text-white font-mono"
-              required
-            />
-          </div>
-          <div className="flex items-end gap-2 pb-2">
-            <input
-              type="file"
-              id="image-upload"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="hidden"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => document.getElementById('image-upload').click()}
-              className="gap-2"
-              disabled={isProcessing}
-            >
-              <ImageIcon className="h-4 w-4 rotate-180" />
-            </Button>
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="message" className="text-sm font-mono uppercase tracking-wider text-white/80 block mb-1">
-            LETTERS
-          </label>
-          <Textarea
-            id="message"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="..."
-            className="mt-1 min-h-[80px] bg-black border-white/50 text-white font-serif"
+    <form className="popup-form" onSubmit={handleSubmit}>
+      {error && <div className="error-message">{error}</div>}
+      <input
+        className="input"
+        type="text"
+        placeholder="Your name"
+        value={author}
+        onChange={e => setAuthor(e.target.value)}
+        maxLength={50}
+        disabled={isProcessing}
+        required
+      />
+      <textarea
+        className="textarea"
+        placeholder="Write your message..."
+        value={content}
+        onChange={e => setContent(e.target.value)}
+        maxLength={1000}
+        disabled={isProcessing}
+      />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <label className="button secondary" style={{ margin: 0 }}>
+          <ImageIcon style={{ verticalAlign: 'middle' }} />
+          <input
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={handleImageChange}
+            disabled={isProcessing}
           />
-        </div>
-
-        {selectedImage && (
-          <div className="space-y-3">
-            <div className="relative">
-              {previewImage && (
-                <img
-                  src={previewImage}
-                  alt="Preview"
-                  className="max-h-40 object-contain border border-white/50"
-                />
-              )}
-              <div className="absolute top-2 right-2 flex gap-2">
-                <div className="flex flex-col gap-2">
-                  <Button
-                    type="button"
-                    variant={applyMerzh ? "default" : "outline"}
-                    size="sm"
-                    onClick={handleMerzhToggle}
-                    className="font-mono"
-                    disabled={isProcessing}
-                  >
-                    merzh
-                  </Button>
-                  {applyMerzh && (
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={merzhWidth === 0 ? 0 : Math.log2(merzhWidth) * 20}
-                          onChange={handleMerzhWidthChange}
-                          className="w-32 h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
-                          disabled={isProcessing}
-                        />
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleReset}
-                        className="font-mono"
-                        disabled={isProcessing}
-                      >
-                        reset
-                      </Button>
-                    </div>
-                  )}
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    setSelectedImage(null)
-                    setProcessedImage(null)
-                    setPreviewImage(null)
-                    setApplyMerzh(false)
-                    setMerzhWidth(0)
-                  }}
-                  disabled={isProcessing}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              {processedImage && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleDownload}
-                  className="absolute bottom-2 right-2"
-                  disabled={isProcessing}
-                >
-                  <Download className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          </div>
+        </label>
+        {selectedImage && previewImage && (
+          <img src={previewImage} alt="Preview" style={{ maxHeight: 60, borderRadius: 8, border: '1px solid #444' }} />
         )}
-
-        <div className="flex justify-end">
-          <Button
-            type="submit"
-            className="gap-2 bg-white text-black hover:bg-white/80 font-mono uppercase tracking-wider"
-            disabled={isProcessing || (!content.trim() && !processedImage)}
+        {selectedImage && (
+          <button type="button" className="button secondary" onClick={() => {
+            setSelectedImage(null)
+            setProcessedImage(null)
+            setPreviewImage(null)
+            setApplyMerzh(false)
+            setMerzhWidth(0)
+          }} disabled={isProcessing}>
+            <X />
+          </button>
+        )}
+      </div>
+      {selectedImage && (
+        <div style={{ marginTop: 8 }}>
+          <button
+            type="button"
+            className={applyMerzh ? 'button' : 'button secondary'}
+            onClick={handleMerzhToggle}
+            disabled={isProcessing}
+            style={{ marginRight: 8 }}
           >
-            {isProcessing ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
-            {isProcessing ? 'PROCESSING...' : 'SEND'}
-          </Button>
+            merzh
+          </button>
+          {applyMerzh && (
+            <>
+              <input
+                type="range"
+                min="0"
+                max="32"
+                value={merzhWidth}
+                onChange={handleMerzhWidthChange}
+                className="input"
+                style={{ width: 120, verticalAlign: 'middle' }}
+                disabled={isProcessing}
+              />
+              <button type="button" className="button secondary" onClick={handleReset} disabled={isProcessing} style={{ marginLeft: 8 }}>
+                Reset
+              </button>
+              <div style={{ marginTop: 8 }}>
+                <label style={{ marginRight: 8 }}>
+                  <input
+                    type="radio"
+                    name="merzh-direction"
+                    value="horizontal"
+                    checked={merzhDirection === 'horizontal'}
+                    onChange={() => setMerzhDirection('horizontal')}
+                    disabled={isProcessing}
+                  /> Horizontal
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="merzh-direction"
+                    value="vertical"
+                    checked={merzhDirection === 'vertical'}
+                    onChange={() => setMerzhDirection('vertical')}
+                    disabled={isProcessing}
+                  /> Vertical
+                </label>
+              </div>
+            </>
+          )}
         </div>
-      </form>
-    </div>
+      )}
+      <button className="button" type="submit" disabled={isProcessing} style={{ marginTop: 12 }}>
+        {isProcessing ? <Loader2 className="icon-spin" /> : <Send style={{ verticalAlign: 'middle' }} />} Post
+      </button>
+    </form>
   )
 } 
