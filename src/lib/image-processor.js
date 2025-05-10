@@ -52,16 +52,17 @@ export async function processImageCollage(imageData, text, textSize, includePict
           const width = canvas.width
           const height = canvas.height
 
-          const merzhChunks = Math.max(2, Math.floor(merzhWidth))
+          const bandWidth = Math.max(1, Math.floor(merzhWidth))
+          const originalData = new Uint8ClampedArray(data)
+
           if (direction === 'vertical') {
-            const chunkWidth = Math.floor(width / merzhChunks)
-            const originalData = new Uint8ClampedArray(data)
-            for (let x = 0; x < width; x += chunkWidth) {
-              const currentChunkWidth = Math.min(chunkWidth, width - x)
+            // Shuffle vertical columns in bands of bandWidth
+            for (let x = 0; x < width; x += bandWidth) {
+              const currentBandWidth = Math.min(bandWidth, width - x)
               const offset = Math.floor(Math.random() * height)
-              for (let chunkX = 0; chunkX < currentChunkWidth; chunkX++) {
-                const sourceX = x + chunkX
-                const targetX = x + chunkX
+              for (let bandX = 0; bandX < currentBandWidth; bandX++) {
+                const sourceX = x + bandX
+                const targetX = x + bandX
                 for (let y = 0; y < height; y++) {
                   const sourceY = (y + offset) % height
                   const targetY = y
@@ -75,15 +76,13 @@ export async function processImageCollage(imageData, text, textSize, includePict
               }
             }
           } else {
-            // horizontal
-            const chunkHeight = Math.floor(height / merzhChunks)
-            const originalData = new Uint8ClampedArray(data)
-            for (let y = 0; y < height; y += chunkHeight) {
-              const currentChunkHeight = Math.min(chunkHeight, height - y)
+            // Shuffle horizontal lines in bands of bandWidth
+            for (let y = 0; y < height; y += bandWidth) {
+              const currentBandHeight = Math.min(bandWidth, height - y)
               const offset = Math.floor(Math.random() * width)
-              for (let chunkY = 0; chunkY < currentChunkHeight; chunkY++) {
-                const sourceY = y + chunkY
-                const targetY = y + chunkY
+              for (let bandY = 0; bandY < currentBandHeight; bandY++) {
+                const sourceY = y + bandY
+                const targetY = y + bandY
                 for (let x = 0; x < width; x++) {
                   const sourceX = (x + offset) % width
                   const targetX = x
