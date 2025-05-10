@@ -194,7 +194,7 @@ export function MessageInput({ onSubmit }) {
       const img = new Image()
       img.onload = () => {
         const canvas = document.createElement('canvas')
-        const maxSize = 150
+        const maxSize = 600 // Increased from 150 to 600 (4x)
         const scale = Math.min(maxSize / img.width, maxSize / img.height)
         canvas.width = Math.floor(img.width * scale)
         canvas.height = Math.floor(img.height * scale)
@@ -321,7 +321,14 @@ export function MessageInput({ onSubmit }) {
   }
 
   return (
-    <form className="popup-form" onSubmit={handleSubmit}>
+    <form className="popup-form" onSubmit={handleSubmit} style={{ 
+      padding: '1rem',
+      maxHeight: '90vh',
+      overflowY: 'auto',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem'
+    }}>
       {error && <div className="error-message">{error}</div>}
       <input
         className="input"
@@ -340,9 +347,18 @@ export function MessageInput({ onSubmit }) {
         onChange={e => setContent(e.target.value)}
         maxLength={1000}
         disabled={isProcessing}
+        style={{ minHeight: '100px', maxHeight: '200px' }}
       />
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <label className="button secondary" style={{ margin: 0 }}>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        gap: '1rem',
+        width: '100%'
+      }}>
+        <label className="button secondary" style={{ 
+          margin: 0,
+          width: 'fit-content'
+        }}>
           <ImageIcon style={{ verticalAlign: 'middle' }} />
           <input
             type="file"
@@ -353,7 +369,7 @@ export function MessageInput({ onSubmit }) {
           />
         </label>
         {selectedImage && previewImage && (
-          <img src={previewImage} alt="Preview" className="image-preview" style={{ maxWidth: '100%', maxHeight: '80vh' }} />
+          <img src={previewImage} alt="Preview" className="image-preview" />
         )}
         {selectedImage && (
           <div className="merzh-controls">
@@ -364,7 +380,7 @@ export function MessageInput({ onSubmit }) {
               disabled={isProcessing}
               style={{ marginRight: 8 }}
             >
-              MERZH
+              merzh
             </Button>
             {applyMerzh && (
               <>
@@ -372,24 +388,20 @@ export function MessageInput({ onSubmit }) {
                 <div className="merzh-slider">
                   <input
                     type="range"
-                    min="2"
-                    max="40"
-                    step="2"
+                    min="1"
+                    max="32"
                     value={merzhWidth}
-                    onChange={e => {
-                      const v = parseInt(e.target.value, 10)
-                      setMerzhWidth(v)
-                      if (originalImageData) processImage(originalImageData)
-                    }}
+                    onChange={handleMerzhWidthChange}
                     disabled={isProcessing}
                   />
+                  <span className="slider-value">{merzhWidth}</span>
                 </div>
                 <div className="merzh-label">MERZH DIRECTION</div>
                 <div className="direction-toggle">
                   <button
                     type="button"
                     className={merzhDirection === 'horizontal' ? 'selected' : ''}
-                    onClick={() => { setMerzhDirection('horizontal'); if (originalImageData) processImage(originalImageData); }}
+                    onClick={() => { setMerzhDirection('horizontal'); if (selectedImage) processImage(selectedImage); }}
                     disabled={isProcessing}
                   >
                     <span>H</span>
@@ -397,7 +409,7 @@ export function MessageInput({ onSubmit }) {
                   <button
                     type="button"
                     className={merzhDirection === 'vertical' ? 'selected' : ''}
-                    onClick={() => { setMerzhDirection('vertical'); if (originalImageData) processImage(originalImageData); }}
+                    onClick={() => { setMerzhDirection('vertical'); if (selectedImage) processImage(selectedImage); }}
                     disabled={isProcessing}
                   >
                     <span>V</span>
@@ -408,7 +420,17 @@ export function MessageInput({ onSubmit }) {
           </div>
         )}
       </div>
-      <button className="button" type="submit" disabled={isProcessing} style={{ marginTop: 12 }}>
+      <button 
+        className="button" 
+        type="submit" 
+        disabled={isProcessing} 
+        style={{ 
+          marginTop: 'auto',
+          position: 'sticky',
+          bottom: 0,
+          width: '100%'
+        }}
+      >
         {isProcessing ? <Loader2 className="icon-spin" /> : <Send style={{ verticalAlign: 'middle' }} />} Post
       </button>
     </form>
