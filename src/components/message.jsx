@@ -24,13 +24,16 @@ export function Message({ message }) {
           )}
           {message.imageData && (
             <div
+              className="message-image-frame"
               style={{
                 border: '2px solid #fff',
                 background: '#000',
-                maxWidth: '100%',
+                width: '100vw',
+                maxWidth: '100vw',
                 maxHeight: '40vh',
                 overflow: 'hidden',
                 marginTop: 16,
+                marginLeft: 'calc(-1 * (var(--message-card-padding, 0)))',
                 boxSizing: 'border-box',
                 display: 'flex',
                 alignItems: 'center',
@@ -41,8 +44,9 @@ export function Message({ message }) {
                 src={message.imageData}
                 alt="Message attachment"
                 style={{
-                  maxWidth: '100%',
-                  maxHeight: '100%',
+                  width: '100%',
+                  height: 'auto',
+                  maxWidth: '100vw',
                   objectFit: 'contain',
                   display: 'block',
                   margin: '0 auto',

@@ -303,3 +303,10 @@ body {
   max-width: 100%;
   box-sizing: border-box;
 }
+
+@media (max-width: 600px) {
+  .message-image-frame {
+    max-height: 30vh !important;
+    min-height: 120px;
+  }
+}

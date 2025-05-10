@@ -309,13 +309,6 @@ export function MessageInput({ onSubmit }) {
     }
   }
 
-  const handleReset = () => {
-    setMerzhWidth(0)
-    if (selectedImage && applyMerzh) {
-      handleMerzhWidthChange({ target: { value: 0 } })
-    }
-  }
-
   const handleDownload = () => {
     if (processedImage) {
       const link = document.createElement('a')
@@ -410,29 +403,6 @@ export function MessageInput({ onSubmit }) {
                     <span>V</span>
                   </button>
                 </div>
-                <button
-                  type="button"
-                  className="button secondary"
-                  onClick={async () => {
-                    setMerzhWidth(0)
-                    if (originalImageData) {
-                      setIsProcessing(true)
-                      try {
-                        const processed = await processImageCollage(originalImageData, '', 0, false, true, 0, merzhDirection)
-                        setPreviewImage(processed)
-                        setProcessedImage(processed)
-                      } catch (error) {
-                        setError('Error processing image. Please try again.')
-                      } finally {
-                        setIsProcessing(false)
-                      }
-                    }
-                  }}
-                  disabled={isProcessing}
-                  style={{ marginTop: 8 }}
-                >
-                  RESET
-                </button>
               </>
             )}
           </div>
