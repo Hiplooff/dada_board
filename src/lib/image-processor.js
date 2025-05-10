@@ -51,11 +51,24 @@ export async function processImageCollage(imageData, text, textSize, includePict
         if (applyMerzh && merzhWidth > 0) {
           const width = canvas.width
           const height = canvas.height
-          
+
+          // Clamp merzhWidth to not exceed width/height
+          const safeMerzhWidth = Math.max(1, Math.min(merzhWidth, direction === 'vertical' ? width : height))
           const chunkSize = direction === 'vertical'
-            ? Math.max(1, Math.floor(width / merzhWidth))
-            : Math.max(1, Math.floor(height / merzhWidth))
-          
+            ? Math.max(1, Math.floor(width / safeMerzhWidth))
+            : Math.max(1, Math.floor(height / safeMerzhWidth))
+
+          // If chunkSize is too large, skip Merzh effect
+          if (chunkSize >= (direction === 'vertical' ? width : height)) {
+            // No shuffling, just use black and white
+            ctx.putImageData(imageData, 0, 0)
+            const result = canvas.toDataURL('image/jpeg', 0.85)
+            canvas.width = 1
+            canvas.height = 1
+            resolve(result)
+            return
+          }
+
           // Create a copy of the data
           const originalData = new Uint8ClampedArray(data)
           
