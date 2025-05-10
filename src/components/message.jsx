@@ -18,7 +18,7 @@ export function Message({ message }) {
             </span>
           </div>
           {message.content && (
-            <p className="mt-1 text-gray-200 font-serif" style={{ lineHeight: "1.7" }}>
+            <p className="mt-1 text-gray-200 font-serif" style={{ lineHeight: '1.7', textTransform: 'none' }}>
               {message.content}
             </p>
           )}
