@@ -20,22 +20,26 @@ export function MessageBoard({ messages, isLoading }) {
   }
 
   return (
-    <div>
+    <div className="message-board">
       {messages.map((message) => (
         <div key={message.id} className="message-card">
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-              <h3>{message.author}</h3>
-              <time>
+          <div className="message-content">
+            <div className="message-header">
+              <h3 className="message-author">{message.author}</h3>
+              <time className="message-time">
                 {format(new Date(message.created_at), 'MMM d, yyyy h:mm a')}
               </time>
             </div>
-            <p>{message.content}</p>
+            {message.content && (
+              <p className="message-text">{message.content}</p>
+            )}
             {message.image_url && (
-              <div>
+              <div className="message-image-container">
                 <img
                   src={message.image_url}
                   alt="Message attachment"
+                  className="message-image"
+                  loading="lazy"
                 />
               </div>
             )}
