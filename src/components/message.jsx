@@ -33,11 +33,13 @@ export function Message({ message }) {
                 maxHeight: '40vh',
                 overflow: 'hidden',
                 marginTop: 16,
-                marginLeft: 'calc(-1 * (var(--message-card-padding, 0)))',
                 boxSizing: 'border-box',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                position: 'relative',
+                left: '50%',
+                transform: 'translateX(-50%)'
               }}
             >
               <img

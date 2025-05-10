@@ -305,8 +305,25 @@ body {
 }
 
 @media (max-width: 600px) {
+  .board-container,
+  .message-card {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
   .message-image-frame {
-    max-height: 30vh !important;
-    min-height: 120px;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow: hidden;
+  }
+  body {
+    overflow-x: hidden !important;
   }
 }
