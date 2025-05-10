@@ -23,16 +23,12 @@ export function Message({ message }) {
             </p>
           )}
           {message.imageData && (
-            <div className="mt-3 overflow-hidden border border-white/50">
-              <div className="relative aspect-[4/3] max-h-[400px]">
-                <img
-                  src={message.imageData}
-                  alt="Message attachment"
-                  className="absolute inset-0 w-full h-full object-contain"
-                  style={{ maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto', border: '2px solid #fff', borderRadius: 0 }}
-                />
-                <div className="absolute inset-0 bg-black/10 mix-blend-overlay"></div>
-              </div>
+            <div style={{ border: '2px solid #fff', padding: 0, marginTop: 16, background: '#000' }}>
+              <img
+                src={message.imageData}
+                alt="Message attachment"
+                style={{ maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto', border: 'none', borderRadius: 0 }}
+              />
             </div>
           )}
         </div>
