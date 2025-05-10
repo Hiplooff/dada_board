@@ -4,9 +4,10 @@
  * @param {boolean} isPreview - Whether to create a preview thumbnail
  * @param {boolean} applyMerzh - Whether to apply the merzh effect
  * @param {number} merzhWidth - Width of merzh lines (0 = no effect, 2 = 1/2, 4 = 1/4, 8 = 1/8, 16 = 1/16, etc.)
+ * @param {string} direction - Direction of shuffling ('horizontal' or 'vertical')
  * @returns {Promise<string>} - Processed image data
  */
-export async function processImageCollage(imageData, text, textSize, includePicture, applyMerzh, merzhWidth) {
+export async function processImageCollage(imageData, text, textSize, includePicture, applyMerzh, merzhWidth, direction = 'horizontal') {
   return new Promise((resolve, reject) => {
     if (!imageData) {
       reject(new Error('No image data provided'))
@@ -51,38 +52,51 @@ export async function processImageCollage(imageData, text, textSize, includePict
           const width = canvas.width
           const height = canvas.height
           
-          // Calculate line height based on powers of 2
-          // For merzhWidth = 2: lineHeight = height/2
-          // For merzhWidth = 4: lineHeight = height/4
-          // For merzhWidth = 8: lineHeight = height/8
-          // For merzhWidth = 16: lineHeight = height/16
-          // And so on...
-          const lineHeight = Math.max(1, Math.floor(height / merzhWidth))
+          const chunkSize = direction === 'vertical'
+            ? Math.max(1, Math.floor(width / merzhWidth))
+            : Math.max(1, Math.floor(height / merzhWidth))
           
           // Create a copy of the data
           const originalData = new Uint8ClampedArray(data)
           
-          // Shuffle horizontal lines
-          for (let y = 0; y < height; y += lineHeight) {
-            const currentLineHeight = Math.min(lineHeight, height - y)
-            const offset = Math.floor(Math.random() * width)
-            
-            // Copy each line with offset
-            for (let lineY = 0; lineY < currentLineHeight; lineY++) {
-              const sourceY = y + lineY
-              const targetY = y + lineY
-              
-              for (let x = 0; x < width; x++) {
-                const sourceX = (x + offset) % width
-                const targetX = x
-                
-                const sourceIndex = (sourceY * width + sourceX) * 4
-                const targetIndex = (targetY * width + targetX) * 4
-                
-                data[targetIndex] = originalData[sourceIndex]
-                data[targetIndex + 1] = originalData[sourceIndex + 1]
-                data[targetIndex + 2] = originalData[sourceIndex + 2]
-                data[targetIndex + 3] = originalData[sourceIndex + 3]
+          if (direction === 'vertical') {
+            // Shuffle vertical columns
+            for (let x = 0; x < width; x += chunkSize) {
+              const currentChunkWidth = Math.min(chunkSize, width - x)
+              const offset = Math.floor(Math.random() * height)
+              for (let chunkX = 0; chunkX < currentChunkWidth; chunkX++) {
+                const sourceX = x + chunkX
+                const targetX = x + chunkX
+                for (let y = 0; y < height; y++) {
+                  const sourceY = (y + offset) % height
+                  const targetY = y
+                  const sourceIndex = (sourceY * width + sourceX) * 4
+                  const targetIndex = (targetY * width + targetX) * 4
+                  data[targetIndex] = originalData[sourceIndex]
+                  data[targetIndex + 1] = originalData[sourceIndex + 1]
+                  data[targetIndex + 2] = originalData[sourceIndex + 2]
+                  data[targetIndex + 3] = originalData[sourceIndex + 3]
+                }
+              }
+            }
+          } else {
+            // Shuffle horizontal lines (default)
+            for (let y = 0; y < height; y += chunkSize) {
+              const currentChunkHeight = Math.min(chunkSize, height - y)
+              const offset = Math.floor(Math.random() * width)
+              for (let chunkY = 0; chunkY < currentChunkHeight; chunkY++) {
+                const sourceY = y + chunkY
+                const targetY = y + chunkY
+                for (let x = 0; x < width; x++) {
+                  const sourceX = (x + offset) % width
+                  const targetX = x
+                  const sourceIndex = (sourceY * width + sourceX) * 4
+                  const targetIndex = (targetY * width + targetX) * 4
+                  data[targetIndex] = originalData[sourceIndex]
+                  data[targetIndex + 1] = originalData[sourceIndex + 1]
+                  data[targetIndex + 2] = originalData[sourceIndex + 2]
+                  data[targetIndex + 3] = originalData[sourceIndex + 3]
+                }
               }
             }
           }
