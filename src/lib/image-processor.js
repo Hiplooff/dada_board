@@ -23,24 +23,25 @@ export async function processImageCollage(imageData, text, textSize, includePict
 
     img.onload = () => {
       try {
+        // Create canvas with proper scaling
         const canvas = document.createElement('canvas')
-        const maxSize = 800 // Increased max size for better quality
+        const maxSize = 800 // Maintain good quality while limiting size
         const scale = Math.min(maxSize / img.width, maxSize / img.height)
         canvas.width = Math.floor(img.width * scale)
         canvas.height = Math.floor(img.height * scale)
-        const ctx = canvas.getContext('2d', { willReadFrequently: true })
         
+        const ctx = canvas.getContext('2d', { willReadFrequently: true })
         if (!ctx) {
           reject(new Error('Could not get canvas context'))
           return
         }
 
-        // Draw image
+        // Draw and convert to black and white
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
         const data = imageData.data
         
-        // Convert to black and white
+        // Convert to true black and white (not grayscale)
         for (let i = 0; i < data.length; i += 4) {
           const avg = (data[i] + data[i + 1] + data[i + 2]) / 3
           const bw = avg > 128 ? 255 : 0
@@ -51,23 +52,30 @@ export async function processImageCollage(imageData, text, textSize, includePict
         if (applyMerzh && merzhWidth > 1) {
           const width = canvas.width
           const height = canvas.height
-
-          const bandWidth = Math.max(1, Math.floor(merzhWidth))
+          
+          // Calculate band size based on merzhWidth
+          const bandSize = direction === 'vertical' 
+            ? Math.floor(width / merzhWidth)
+            : Math.floor(height / merzhWidth)
+          
+          // Create a copy of the data for safe manipulation
           const originalData = new Uint8ClampedArray(data)
-
+          
           if (direction === 'vertical') {
-            // Shuffle vertical columns in bands of bandWidth
-            for (let x = 0; x < width; x += bandWidth) {
-              const currentBandWidth = Math.min(bandWidth, width - x)
+            // Process vertical bands
+            for (let x = 0; x < width; x += bandSize) {
+              const currentBandWidth = Math.min(bandSize, width - x)
               const offset = Math.floor(Math.random() * height)
+              
+              // Shift each pixel in the band
               for (let bandX = 0; bandX < currentBandWidth; bandX++) {
                 const sourceX = x + bandX
-                const targetX = x + bandX
                 for (let y = 0; y < height; y++) {
                   const sourceY = (y + offset) % height
-                  const targetY = y
                   const sourceIndex = (sourceY * width + sourceX) * 4
-                  const targetIndex = (targetY * width + targetX) * 4
+                  const targetIndex = (y * width + sourceX) * 4
+                  
+                  // Copy all RGBA values
                   data[targetIndex] = originalData[sourceIndex]
                   data[targetIndex + 1] = originalData[sourceIndex + 1]
                   data[targetIndex + 2] = originalData[sourceIndex + 2]
@@ -76,18 +84,20 @@ export async function processImageCollage(imageData, text, textSize, includePict
               }
             }
           } else {
-            // Shuffle horizontal lines in bands of bandWidth
-            for (let y = 0; y < height; y += bandWidth) {
-              const currentBandHeight = Math.min(bandWidth, height - y)
+            // Process horizontal bands
+            for (let y = 0; y < height; y += bandSize) {
+              const currentBandHeight = Math.min(bandSize, height - y)
               const offset = Math.floor(Math.random() * width)
+              
+              // Shift each pixel in the band
               for (let bandY = 0; bandY < currentBandHeight; bandY++) {
                 const sourceY = y + bandY
-                const targetY = y + bandY
                 for (let x = 0; x < width; x++) {
                   const sourceX = (x + offset) % width
-                  const targetX = x
                   const sourceIndex = (sourceY * width + sourceX) * 4
-                  const targetIndex = (targetY * width + targetX) * 4
+                  const targetIndex = (sourceY * width + x) * 4
+                  
+                  // Copy all RGBA values
                   data[targetIndex] = originalData[sourceIndex]
                   data[targetIndex + 1] = originalData[sourceIndex + 1]
                   data[targetIndex + 2] = originalData[sourceIndex + 2]
@@ -98,12 +108,16 @@ export async function processImageCollage(imageData, text, textSize, includePict
           }
         }
         
+        // Put the processed data back on the canvas
         ctx.putImageData(imageData, 0, 0)
+        
+        // Convert to JPEG with 85% quality
         const result = canvas.toDataURL('image/jpeg', 0.85)
         
         // Clean up
         canvas.width = 1
         canvas.height = 1
+        ctx.clearRect(0, 0, 1, 1)
         
         resolve(result)
       } catch (error) {
