@@ -419,7 +419,6 @@ export function MessageInput({ onSubmit }) {
                     if (originalImageData) {
                       setIsProcessing(true)
                       try {
-                        // Re-process with applyMerzh: false
                         const processed = await processImageCollage(originalImageData, '', 0, false, false, 0, merzhDirection)
                         setPreviewImage(processed)
                         setProcessedImage(processed)

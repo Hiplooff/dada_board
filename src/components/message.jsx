@@ -27,9 +27,8 @@ export function Message({ message }) {
               style={{
                 border: '2px solid #fff',
                 background: '#000',
-                width: '100%',
                 maxWidth: '100%',
-                maxHeight: '40vw',
+                maxHeight: '40vh',
                 overflow: 'hidden',
                 marginTop: 16,
                 boxSizing: 'border-box',
@@ -46,6 +45,7 @@ export function Message({ message }) {
                   maxHeight: '100%',
                   objectFit: 'contain',
                   display: 'block',
+                  margin: '0 auto',
                   border: 'none',
                   borderRadius: 0,
                   background: '#000'
