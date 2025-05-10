@@ -18,39 +18,21 @@ export function Message({ message }) {
             </span>
           </div>
           {message.content && (
-            <p className="mt-1 text-gray-200 font-serif" style={{ lineHeight: '1.7', textTransform: 'none' }}>
+            <p className="mt-1 text-gray-200 font-serif" style={{ lineHeight: "1.7" }}>
               {message.content}
             </p>
           )}
           {message.imageData && (
-            <div
-              style={{
-                border: '2px solid #fff',
-                background: '#000',
-                width: '100%',
-                maxWidth: '100%',
-                aspectRatio: '4 / 3',
-                overflow: 'hidden',
-                marginTop: 16,
-                boxSizing: 'border-box',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <img
-                src={message.imageData}
-                alt="Message attachment"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  display: 'block',
-                  border: 'none',
-                  borderRadius: 0,
-                  background: '#000'
-                }}
-              />
+            <div className="mt-3 overflow-hidden border border-white/50">
+              <div className="relative aspect-[4/3] max-h-[400px]">
+                <img
+                  src={message.imageData}
+                  alt="Message attachment"
+                  className="absolute inset-0 w-full h-full object-contain"
+                  style={{ maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto', border: '2px solid #fff', borderRadius: 0 }}
+                />
+                <div className="absolute inset-0 bg-black/10 mix-blend-overlay"></div>
+              </div>
             </div>
           )}
         </div>

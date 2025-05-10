@@ -410,6 +410,22 @@ export function MessageInput({ onSubmit }) {
                     <span>V</span>
                   </button>
                 </div>
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() => {
+                    setApplyMerzh(false)
+                    setMerzhWidth(10)
+                    if (originalImageData) {
+                      setPreviewImage(originalImageData)
+                      setProcessedImage(originalImageData)
+                    }
+                  }}
+                  disabled={isProcessing}
+                  style={{ marginTop: 8 }}
+                >
+                  RESET
+                </button>
               </>
             )}
           </div>
