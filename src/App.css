@@ -1,30 +1,26 @@
 /* app.css - Modern, clean, responsive styles for DADA Board */
 
-/* Base styles */
+/* Dada Board - Reference Style Overhaul */
 :root {
-  --background: #000000;
-  --foreground: #ffffff;
-  --primary-bg: #111;
-  --primary-fg: #fff;
-  --secondary-bg: #222;
-  --accent: #4f8cff;
-  --danger: #e74c3c;
-  --border: #444;
-  --shadow: 0 2px 16px rgba(0,0,0,0.15);
-  --radius: 10px;
-  --font-main: 'Inter', system-ui, sans-serif;
-  --font-mono: 'Fira Mono', monospace;
+  --background: #000;
+  --foreground: #fff;
+  --border: #fff;
+  --input-bg: #000;
+  --input-fg: #fff;
+  --button-bg: #000;
+  --button-fg: #fff;
+  --button-border: #fff;
+  --send-bg: #fff;
+  --send-fg: #000;
+  --send-border: #000;
+  --font-main: 'Fira Mono', 'IBM Plex Mono', 'Menlo', 'monospace';
 }
 
 body {
-  margin: 0;
-  min-height: 100vh;
-  background-color: var(--background);
+  background: var(--background);
   color: var(--foreground);
-  width: 100%;
-  padding: 0;
   font-family: var(--font-main);
-  box-sizing: border-box;
+  margin: 0;
 }
 
 #root {
@@ -33,165 +29,244 @@ body {
   flex-direction: column;
 }
 
-h1 {
-  font-family: var(--font-mono);
-  font-size: 2.5rem;
-  text-align: center;
-  margin: 2rem 0 1rem 0;
-  letter-spacing: 0.1em;
+.board-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1rem 8rem 1rem;
+}
+
+.message-card, .popup-input, .message-input, .input, .textarea {
+  background: var(--background);
+  color: var(--foreground);
+  border: 2px solid var(--border);
+  border-radius: 0;
+  font-family: var(--font-main);
+  font-weight: bold;
   text-transform: uppercase;
 }
 
-.board-container {
-  flex: 1;
-  
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 1.5rem 1rem 6rem 1rem;
-  overflow-y: auto;
-}
-
 .message-card {
-  background: var(--secondary-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  margin-bottom: 1.5rem;
-  padding: 1.25rem 1rem;
-  transition: box-shadow 0.2s;
+  margin-bottom: 2rem;
+  padding: 1.5rem 1rem;
 }
 
-.message-card h3 {
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  margin: 0 0 0.5rem 0;
+.message-card h3, .merzh-label, label, .input, .textarea {
+  font-family: var(--font-main);
+  font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
-.message-card time {
-  font-size: 0.85rem;
-  color: #aaa;
-  float: right;
+.input, .textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--input-bg);
+  color: var(--input-fg);
+  border: 2px solid var(--border);
+  border-radius: 0;
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
 }
 
-.message-card p {
-  font-size: 1.1rem;
-  margin: 0.5rem 0 0 0;
+.textarea {
+  min-height: 100px;
+}
+
+.button, .direction-toggle button, .merzh-controls button {
+  background: var(--button-bg);
+  color: var(--button-fg);
+  border: 2px solid var(--button-border);
+  border-radius: 0;
   font-family: var(--font-main);
-  white-space: pre-wrap;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  padding: 0.7rem 1.5rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: background 0.2s, color 0.2s;
 }
 
-.message-card img {
-  display: block;
-  max-width: 100%;
-  margin: 1rem 0 0 0;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+.button:active, .direction-toggle button.selected {
+  background: var(--foreground);
+  color: var(--background);
+  border: 2px solid var(--border);
 }
 
-/* Floating + button */
+.button.secondary {
+  background: var(--background);
+  color: var(--foreground);
+  border: 2px solid var(--border);
+}
+
 .fab {
   position: fixed;
   right: 2rem;
   bottom: 2rem;
   width: 70px;
   height: 48px;
-  background: var(--accent);
-  color: #fff;
-  border: none;
+  background: var(--button-bg);
+  color: var(--button-fg);
+  border: 2px solid var(--button-border);
   font-size: 2.5rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-main);
   font-weight: bold;
   text-transform: uppercase;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  box-shadow: var(--shadow);
+  box-shadow: none;
   cursor: pointer;
   transform: skew(-20deg);
-  transition: background 0.2s, box-shadow 0.2s;
+  border-radius: 0;
 }
+
 .fab span {
   transform: skew(20deg);
   font-size: 2.2rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-main);
   font-weight: bold;
   letter-spacing: 0.1em;
 }
+
 .fab:hover {
-  background: #2563eb;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  background: var(--foreground);
+  color: var(--background);
 }
 
-/* Pop-up message input */
 .popup-input {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--secondary-bg);
+  background: var(--background);
   border-top: 2px solid var(--border);
-  box-shadow: 0 -2px 16px rgba(0,0,0,0.2);
+  box-shadow: none;
   padding: 2rem 1rem 1.5rem 1rem;
   z-index: 2000;
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
-  border-radius: var(--radius) var(--radius) 0 0;
-  animation: popup-in 0.2s;
-}
-@keyframes popup-in {
-  from { transform: translateY(100%); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  border-radius: 0;
 }
 
-.popup-input form {
+.popup-form {
   display: flex;
   flex-direction: column;
+  gap: 1.2rem;
+}
+
+.image-preview {
+  max-height: 400px;
+  max-width: 100%;
+  object-fit: contain;
+  border: 2px solid var(--border);
+  border-radius: 0;
+  margin-bottom: 1rem;
+}
+
+.merzh-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+
+.merzh-label {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.direction-toggle {
+  display: flex;
   gap: 1rem;
 }
 
-.input, .textarea {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: #181818;
-  color: #fff;
-  font-size: 1rem;
-  font-family: var(--font-main);
-  resize: none;
-}
-
-.textarea {
-  min-height: 80px;
-}
-
-.button {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius);
-  padding: 0.75rem 1.5rem;
+.direction-toggle button {
+  min-width: 48px;
+  padding: 0.7rem 1.2rem;
+  border-radius: 0;
   font-size: 1.1rem;
-  font-family: var(--font-main);
+}
+
+.merzh-slider {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.merzh-slider input[type="range"] {
+  width: 260px;
+  accent-color: var(--foreground);
+  background: var(--background);
+  border: 2px solid var(--border);
+  height: 6px;
+  margin: 0;
+}
+
+.merzh-slider input[type="range"]::-webkit-slider-thumb {
+  width: 24px;
+  height: 24px;
+  background: var(--foreground);
+  border: 2px solid var(--border);
+  border-radius: 0;
   cursor: pointer;
-  transition: background 0.2s;
-}
-.button:hover {
-  background: #2563eb;
 }
 
-.button.secondary {
-  background: #444;
-  color: #fff;
-}
-.button.secondary:hover {
-  background: #333;
+.merzh-slider input[type="range"]::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: var(--foreground);
+  border: 2px solid var(--border);
+  border-radius: 0;
+  cursor: pointer;
 }
 
-@media (max-width: 600px) {
+.merzh-slider input[type="range"]::-ms-thumb {
+  width: 24px;
+  height: 24px;
+  background: var(--foreground);
+  border: 2px solid var(--border);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.merzh-slider input[type="range"]:focus {
+  outline: none;
+}
+
+.merzh-slider .slider-value {
+  display: none;
+}
+
+/* Send button bottom right */
+.popup-form {
+  position: relative;
+}
+
+.button[type="submit"] {
+  position: absolute;
+  right: 0;
+  bottom: -4.5rem;
+  background: var(--send-bg);
+  color: var(--send-fg);
+  border: 2px solid var(--send-border);
+  font-family: var(--font-main);
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  padding: 1.1rem 2.5rem;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.button[type="submit"]:hover {
+  background: var(--background);
+  color: var(--foreground);
+  border: 2px solid var(--border);
+}
+
+@media (max-width: 700px) {
   .board-container, .popup-input {
     max-width: 100vw;
     padding-left: 0.5rem;
@@ -201,111 +276,15 @@ h1 {
     right: 1rem;
     bottom: 1rem;
     width: 48px;
-    height: 48px;
+    height: 38px;
     font-size: 2rem;
   }
-}
-
-/* Message board styles */
-.message-board {
-  padding: 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Message input styles */
-.message-input {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 1rem;
-  background-color: var(--background);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Loading spinner */
-.loading-spinner {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
+  .image-preview {
+    max-height: 220px;
   }
-  to {
-    transform: rotate(360deg);
+  .button[type="submit"] {
+    padding: 0.7rem 1.2rem;
+    font-size: 1rem;
+    bottom: -3.5rem;
   }
-}
-
-/* Image preview */
-.image-preview {
-  max-height: 260px;
-  max-width: 100%;
-  object-fit: contain;
-  border: 1.5px solid rgba(255,255,255,0.3);
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
-}
-
-/* Merzh controls */
-.merzh-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 1rem;
-}
-.merzh-label {
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  color: #fff;
-  margin-bottom: 0.25rem;
-  letter-spacing: 0.08em;
-}
-.direction-toggle {
-  display: flex;
-  gap: 0.5rem;
-}
-.direction-toggle button {
-  background: #222;
-  color: #fff;
-  border: none;
-  font-family: var(--font-mono);
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 1.1rem;
-  padding: 0.5rem 1.2rem;
-  border-radius: 0;
-  transform: skew(-20deg);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-.direction-toggle button.selected, .direction-toggle button:active {
-  background: var(--accent);
-  color: #fff;
-}
-.direction-toggle button span {
-  transform: skew(20deg);
-  display: inline-block;
-}
-
-/* Slider */
-.merzh-slider {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-.merzh-slider input[type="range"] {
-  width: 180px;
-  accent-color: var(--accent);
-  height: 4px;
-}
-.merzh-slider .slider-value {
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  color: #fff;
-  min-width: 2.5rem;
-  text-align: right;
 }
