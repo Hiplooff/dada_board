@@ -23,11 +23,33 @@ export function Message({ message }) {
             </p>
           )}
           {message.imageData && (
-            <div style={{ border: '2px solid #fff', padding: 0, marginTop: 16, background: '#000', maxWidth: '100%', maxHeight: '50vw', overflow: 'hidden', boxSizing: 'border-box' }}>
+            <div
+              style={{
+                border: '2px solid #fff',
+                background: '#000',
+                width: '100%',
+                maxWidth: '100%',
+                aspectRatio: '4 / 3',
+                overflow: 'hidden',
+                marginTop: 16,
+                boxSizing: 'border-box',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
               <img
                 src={message.imageData}
                 alt="Message attachment"
-                style={{ maxWidth: '100%', maxHeight: '100%', display: 'block', margin: '0 auto', border: 'none', borderRadius: 0 }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  display: 'block',
+                  border: 'none',
+                  borderRadius: 0,
+                  background: '#000'
+                }}
               />
             </div>
           )}
