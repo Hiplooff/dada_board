@@ -29,6 +29,7 @@ export function Message({ message }) {
                   src={message.imageData}
                   alt="Message attachment"
                   className="absolute inset-0 w-full h-full object-contain"
+                  style={{ maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto', border: '2px solid #fff', borderRadius: 0 }}
                 />
                 <div className="absolute inset-0 bg-black/10 mix-blend-overlay"></div>
               </div>

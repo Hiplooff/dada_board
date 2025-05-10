@@ -29,6 +29,7 @@ export function MessageInput({ onSubmit }) {
   const [merzhWidth, setMerzhWidth] = useState(0)
   const [error, setError] = useState(null)
   const [merzhDirection, setMerzhDirection] = useState('horizontal')
+  const [originalImageData, setOriginalImageData] = useState(null)
 
   // Rate limiting state
   const [messageCount, setMessageCount] = useState(0)
@@ -214,34 +215,29 @@ export function MessageInput({ onSubmit }) {
   const handleImageChange = async (e) => {
     const file = e.target.files[0]
     if (!file) return
-    
     if (!validateFile(file)) return
-    
     setSelectedImage(file)
     setIsProcessing(true)
     setError(null)
-    
     try {
       const reader = new FileReader()
       reader.onload = async (e) => {
         try {
           const imageData = e.target.result
+          setOriginalImageData(imageData)
           await processImage(imageData)
         } catch (error) {
-          console.error('Error processing image:', error)
           setError('Error processing image. Please try again.')
         } finally {
           setIsProcessing(false)
         }
       }
       reader.onerror = () => {
-        console.error('Error reading file')
         setError('Error reading file. Please try again.')
         setIsProcessing(false)
       }
       reader.readAsDataURL(file)
     } catch (error) {
-      console.error('Error reading file:', error)
       setError('Error reading file. Please try again.')
       setIsProcessing(false)
     }
@@ -364,7 +360,7 @@ export function MessageInput({ onSubmit }) {
           />
         </label>
         {selectedImage && previewImage && (
-          <img src={previewImage} alt="Preview" className="image-preview" />
+          <img src={previewImage} alt="Preview" className="image-preview" style={{ maxWidth: '100%', maxHeight: '40vh' }} />
         )}
         {selectedImage && (
           <div className="merzh-controls">
@@ -375,7 +371,7 @@ export function MessageInput({ onSubmit }) {
               disabled={isProcessing}
               style={{ marginRight: 8 }}
             >
-              merzh
+              MERZH
             </Button>
             {applyMerzh && (
               <>
@@ -383,20 +379,24 @@ export function MessageInput({ onSubmit }) {
                 <div className="merzh-slider">
                   <input
                     type="range"
-                    min="1"
-                    max="32"
+                    min="2"
+                    max="40"
+                    step="2"
                     value={merzhWidth}
-                    onChange={handleMerzhWidthChange}
+                    onChange={e => {
+                      const v = parseInt(e.target.value, 10)
+                      setMerzhWidth(v)
+                      if (originalImageData) processImage(originalImageData)
+                    }}
                     disabled={isProcessing}
                   />
-                  <span className="slider-value">{merzhWidth}</span>
                 </div>
                 <div className="merzh-label">MERZH DIRECTION</div>
                 <div className="direction-toggle">
                   <button
                     type="button"
                     className={merzhDirection === 'horizontal' ? 'selected' : ''}
-                    onClick={() => { setMerzhDirection('horizontal'); if (selectedImage) processImage(selectedImage); }}
+                    onClick={() => { setMerzhDirection('horizontal'); if (originalImageData) processImage(originalImageData); }}
                     disabled={isProcessing}
                   >
                     <span>H</span>
@@ -404,7 +404,7 @@ export function MessageInput({ onSubmit }) {
                   <button
                     type="button"
                     className={merzhDirection === 'vertical' ? 'selected' : ''}
-                    onClick={() => { setMerzhDirection('vertical'); if (selectedImage) processImage(selectedImage); }}
+                    onClick={() => { setMerzhDirection('vertical'); if (originalImageData) processImage(originalImageData); }}
                     disabled={isProcessing}
                   >
                     <span>V</span>
