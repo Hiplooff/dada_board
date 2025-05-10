@@ -148,12 +148,16 @@ body {
   max-width: 700px;
   margin: 0 auto;
   border-radius: 0;
+  overflow-y: auto;
+  max-height: 80vh;
 }
 
 .popup-form {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+  overflow-y: auto;
+  max-height: 80vh;
 }
 
 .image-preview {
@@ -287,4 +291,15 @@ body {
     font-size: 1rem;
     bottom: -3.5rem;
   }
+}
+
+.merzh-controls, .merzh-slider, .direction-toggle {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.button, .direction-toggle button, .merzh-controls button {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
