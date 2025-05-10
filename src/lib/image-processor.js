@@ -48,34 +48,16 @@ export async function processImageCollage(imageData, text, textSize, includePict
         }
 
         // Apply merzh effect if requested
-        if (applyMerzh && merzhWidth > 0) {
+        if (applyMerzh && merzhWidth > 1) {
           const width = canvas.width
           const height = canvas.height
 
-          // Clamp merzhWidth to not exceed width/height
-          const safeMerzhWidth = Math.max(1, Math.min(merzhWidth, direction === 'vertical' ? width : height))
-          const chunkSize = direction === 'vertical'
-            ? Math.max(1, Math.floor(width / safeMerzhWidth))
-            : Math.max(1, Math.floor(height / safeMerzhWidth))
-
-          // If chunkSize is too large, skip Merzh effect
-          if (chunkSize >= (direction === 'vertical' ? width : height)) {
-            // No shuffling, just use black and white
-            ctx.putImageData(imageData, 0, 0)
-            const result = canvas.toDataURL('image/jpeg', 0.85)
-            canvas.width = 1
-            canvas.height = 1
-            resolve(result)
-            return
-          }
-
-          // Create a copy of the data
-          const originalData = new Uint8ClampedArray(data)
-          
+          const merzhChunks = Math.max(2, Math.floor(merzhWidth))
           if (direction === 'vertical') {
-            // Shuffle vertical columns
-            for (let x = 0; x < width; x += chunkSize) {
-              const currentChunkWidth = Math.min(chunkSize, width - x)
+            const chunkWidth = Math.floor(width / merzhChunks)
+            const originalData = new Uint8ClampedArray(data)
+            for (let x = 0; x < width; x += chunkWidth) {
+              const currentChunkWidth = Math.min(chunkWidth, width - x)
               const offset = Math.floor(Math.random() * height)
               for (let chunkX = 0; chunkX < currentChunkWidth; chunkX++) {
                 const sourceX = x + chunkX
@@ -93,9 +75,11 @@ export async function processImageCollage(imageData, text, textSize, includePict
               }
             }
           } else {
-            // Shuffle horizontal lines (default)
-            for (let y = 0; y < height; y += chunkSize) {
-              const currentChunkHeight = Math.min(chunkSize, height - y)
+            // horizontal
+            const chunkHeight = Math.floor(height / merzhChunks)
+            const originalData = new Uint8ClampedArray(data)
+            for (let y = 0; y < height; y += chunkHeight) {
+              const currentChunkHeight = Math.min(chunkHeight, height - y)
               const offset = Math.floor(Math.random() * width)
               for (let chunkY = 0; chunkY < currentChunkHeight; chunkY++) {
                 const sourceY = y + chunkY
