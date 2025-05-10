@@ -413,12 +413,19 @@ export function MessageInput({ onSubmit }) {
                 <button
                   type="button"
                   className="button secondary"
-                  onClick={() => {
-                    setApplyMerzh(false)
+                  onClick={async () => {
                     setMerzhWidth(0)
-                    if (previewImage) {
-                      setPreviewImage(previewImage)
-                      setProcessedImage(previewImage)
+                    if (originalImageData) {
+                      setIsProcessing(true)
+                      try {
+                        const processed = await processImageCollage(originalImageData, '', 0, false, true, 0, merzhDirection)
+                        setPreviewImage(processed)
+                        setProcessedImage(processed)
+                      } catch (error) {
+                        setError('Error processing image. Please try again.')
+                      } finally {
+                        setIsProcessing(false)
+                      }
                     }
                   }}
                   disabled={isProcessing}
