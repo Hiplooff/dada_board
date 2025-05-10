@@ -23,11 +23,11 @@ export function Message({ message }) {
             </p>
           )}
           {message.imageData && (
-            <div style={{ border: '2px solid #fff', padding: 0, marginTop: 16, background: '#000' }}>
+            <div style={{ border: '2px solid #fff', padding: 0, marginTop: 16, background: '#000', maxWidth: '100%', maxHeight: '50vw', overflow: 'hidden', boxSizing: 'border-box' }}>
               <img
                 src={message.imageData}
                 alt="Message attachment"
-                style={{ maxWidth: '100%', height: 'auto', display: 'block', margin: '0 auto', border: 'none', borderRadius: 0 }}
+                style={{ maxWidth: '100%', maxHeight: '100%', display: 'block', margin: '0 auto', border: 'none', borderRadius: 0 }}
               />
             </div>
           )}

@@ -360,7 +360,7 @@ export function MessageInput({ onSubmit }) {
           />
         </label>
         {selectedImage && previewImage && (
-          <img src={previewImage} alt="Preview" className="image-preview" style={{ maxWidth: '100%', maxHeight: '40vh' }} />
+          <img src={previewImage} alt="Preview" className="image-preview" style={{ maxWidth: '100%', maxHeight: '80vh' }} />
         )}
         {selectedImage && (
           <div className="merzh-controls">
