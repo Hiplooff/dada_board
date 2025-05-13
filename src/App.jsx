@@ -109,7 +109,7 @@ function App() {
 
   return (
     <div>
-      <h1>DADA BOARD</h1>
+      <h1>THIS IS NOT A MESSAGE BOARD</h1>
       {error && (
         <div className="error-message">
           {error}
