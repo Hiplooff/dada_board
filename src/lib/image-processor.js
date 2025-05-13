@@ -7,116 +7,114 @@
  * @param {string} direction - Direction of shuffling ('horizontal' or 'vertical')
  * @returns {Promise<string>} - Processed image data
  */
-export async function processImageCollage(imageData, text, textSize, includePicture, applyMerzh, merzhWidth, direction = 'horizontal') {
+export async function processImageCollage(
+  imageData,
+  text,
+  textSize,
+  includePicture,
+  applyMerzh,
+  merzhWidth,
+  direction = 'horizontal'
+) {
   return new Promise((resolve, reject) => {
     if (!imageData) {
-      reject(new Error('No image data provided'))
-      return
+      reject(new Error('No image data provided'));
+      return;
     }
 
-    const img = new Image()
-    
-    // Set up error handling
+    const img = new Image();
+
     img.onerror = () => {
-      reject(new Error('Failed to load image'))
-    }
+      reject(new Error('Failed to load image'));
+    };
 
     img.onload = () => {
       try {
-        const canvas = document.createElement('canvas')
-        const maxSize = 800 // Increased max size for better quality
-        const scale = Math.min(maxSize / img.width, maxSize / img.height)
-        canvas.width = Math.floor(img.width * scale)
-        canvas.height = Math.floor(img.height * scale)
-        const ctx = canvas.getContext('2d', { willReadFrequently: true })
-        
+        const canvas = document.createElement('canvas');
+        const maxSize = 800;
+        const scale = Math.min(maxSize / img.width, maxSize / img.height);
+        canvas.width = Math.floor(img.width * scale);
+        canvas.height = Math.floor(img.height * scale);
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
         if (!ctx) {
-          reject(new Error('Could not get canvas context'))
-          return
+          reject(new Error('Could not get canvas context'));
+          return;
         }
 
-        // Draw image
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-        const data = imageData.data
-        
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const imageDataObj = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageDataObj.data;
+
         // Convert to black and white
         for (let i = 0; i < data.length; i += 4) {
-          const avg = (data[i] + data[i + 1] + data[i + 2]) / 3
-          const bw = avg > 128 ? 255 : 0
-          data[i] = data[i + 1] = data[i + 2] = bw
+          const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+          const bw = avg > 128 ? 255 : 0;
+          data[i] = data[i + 1] = data[i + 2] = bw;
         }
 
-        // Apply merzh effect if requested
-        if (applyMerzh && merzhWidth > 0) {
-          const width = canvas.width
-          const height = canvas.height
-          
-          // Calculate band width based on merzhWidth value
-          const bandWidth = Math.max(1, Math.floor(merzhWidth))
-          
-          // Create a copy of the data
-          const originalData = new Uint8ClampedArray(data)
-          
+        // Apply merzh effect
+        if (applyMerzh && merzhWidth > 1) {
+          const width = canvas.width;
+          const height = canvas.height;
+          const originalData = new Uint8ClampedArray(data); // copy
+
+          const bandSize = Math.max(1, Math.floor((direction === 'horizontal' ? height : width) / merzhWidth));
+
           if (direction === 'vertical') {
-            // Shuffle vertical columns
-            for (let x = 0; x < width; x += bandWidth) {
-              const currentBandWidth = Math.min(bandWidth, width - x)
-              const offset = Math.floor(Math.random() * height)
+            for (let x = 0; x < width; x += bandSize) {
+              const currentBandWidth = Math.min(bandSize, width - x);
+              const shift = Math.floor(Math.random() * height);
+
               for (let bandX = 0; bandX < currentBandWidth; bandX++) {
-                const sourceX = x + bandX
-                const targetX = x + bandX
                 for (let y = 0; y < height; y++) {
-                  const sourceY = (y + offset) % height
-                  const targetY = y
-                  const sourceIndex = (sourceY * width + sourceX) * 4
-                  const targetIndex = (targetY * width + targetX) * 4
-                  data[targetIndex] = originalData[sourceIndex]
-                  data[targetIndex + 1] = originalData[sourceIndex + 1]
-                  data[targetIndex + 2] = originalData[sourceIndex + 2]
-                  data[targetIndex + 3] = originalData[sourceIndex + 3]
+                  const sourceY = (y + shift) % height;
+                  const sourceIndex = ((sourceY * width) + (x + bandX)) * 4;
+                  const targetIndex = ((y * width) + (x + bandX)) * 4;
+
+                  data[targetIndex] = originalData[sourceIndex];
+                  data[targetIndex + 1] = originalData[sourceIndex + 1];
+                  data[targetIndex + 2] = originalData[sourceIndex + 2];
+                  data[targetIndex + 3] = originalData[sourceIndex + 3];
                 }
               }
             }
           } else {
-            // Shuffle horizontal lines (default)
-            for (let y = 0; y < height; y += bandWidth) {
-              const currentBandHeight = Math.min(bandWidth, height - y)
-              const offset = Math.floor(Math.random() * width)
+            for (let y = 0; y < height; y += bandSize) {
+              const currentBandHeight = Math.min(bandSize, height - y);
+              const shift = Math.floor(Math.random() * width);
+
               for (let bandY = 0; bandY < currentBandHeight; bandY++) {
-                const sourceY = y + bandY
-                const targetY = y + bandY
                 for (let x = 0; x < width; x++) {
-                  const sourceX = (x + offset) % width
-                  const targetX = x
-                  const sourceIndex = (sourceY * width + sourceX) * 4
-                  const targetIndex = (targetY * width + targetX) * 4
-                  data[targetIndex] = originalData[sourceIndex]
-                  data[targetIndex + 1] = originalData[sourceIndex + 1]
-                  data[targetIndex + 2] = originalData[sourceIndex + 2]
-                  data[targetIndex + 3] = originalData[sourceIndex + 3]
+                  const sourceX = (x + shift) % width;
+                  const sourceIndex = (((y + bandY) * width) + sourceX) * 4;
+                  const targetIndex = (((y + bandY) * width) + x) * 4;
+
+                  data[targetIndex] = originalData[sourceIndex];
+                  data[targetIndex + 1] = originalData[sourceIndex + 1];
+                  data[targetIndex + 2] = originalData[sourceIndex + 2];
+                  data[targetIndex + 3] = originalData[sourceIndex + 3];
                 }
               }
             }
           }
         }
-        
-        ctx.putImageData(imageData, 0, 0)
-        const result = canvas.toDataURL('image/jpeg', 0.85)
-        
+
+        ctx.putImageData(imageDataObj, 0, 0);
+        const result = canvas.toDataURL('image/jpeg', 0.85);
+
         // Clean up
-        canvas.width = 1
-        canvas.height = 1
-        
-        resolve(result)
-      } catch (error) {
-        reject(error)
+        canvas.width = 1;
+        canvas.height = 1;
+
+        resolve(result);
+      } catch (err) {
+        reject(err);
       }
-    }
-    
-    // Load the image
-    img.src = imageData
-  })
+    };
+
+    img.src = imageData;
+  });
 }
 
 // Helper function to copy a block of pixels from one position to another

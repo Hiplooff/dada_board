@@ -194,7 +194,7 @@ export function MessageInput({ onSubmit }) {
       const img = new Image()
       img.onload = () => {
         const canvas = document.createElement('canvas')
-        const maxSize = 150
+        const maxSize = 600 // Increased from 150 to 600 (4x)
         const scale = Math.min(maxSize / img.width, maxSize / img.height)
         canvas.width = Math.floor(img.width * scale)
         canvas.height = Math.floor(img.height * scale)
