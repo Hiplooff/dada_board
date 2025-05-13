@@ -333,7 +333,7 @@ export function MessageInput({ onSubmit }) {
       <input
         className="input"
         type="text"
-        placeholder="Your name"
+        placeholder="NAME"
         value={author}
         onChange={e => setAuthor(e.target.value)}
         maxLength={50}
@@ -342,7 +342,7 @@ export function MessageInput({ onSubmit }) {
       />
       <textarea
         className="textarea"
-        placeholder="Write your message..."
+        placeholder="WORDS"
         value={content}
         onChange={e => setContent(e.target.value)}
         maxLength={1000}
