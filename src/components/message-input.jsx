@@ -10,7 +10,15 @@ import { supabase } from '../lib/supabase'
 const MAX_AUTHOR_LENGTH = 50
 const MAX_CONTENT_LENGTH = 1000
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
-const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif']
+const ALLOWED_FILE_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/bmp',
+  'image/tiff',
+  'image/svg+xml'
+]
 
 // Rate limiting
 const RATE_LIMIT = {
@@ -47,11 +55,11 @@ export function MessageInput({ onSubmit }) {
   const validateFile = (file) => {
     if (!file) return false
     if (file.size > MAX_FILE_SIZE) {
-      setError('File size must be less than 5MB')
+      setError(`File size must be less than 5MB. Current size: ${(file.size / (1024 * 1024)).toFixed(2)}MB`)
       return false
     }
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      setError('Only JPEG, PNG, and GIF files are allowed')
+      setError(`Unsupported file type: ${file.type}. Supported formats: JPEG, PNG, GIF, WebP, BMP, TIFF, SVG`)
       return false
     }
     return true

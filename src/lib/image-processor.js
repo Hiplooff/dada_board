@@ -31,7 +31,8 @@ export async function processImageCollage(
     img.onload = () => {
       try {
         const canvas = document.createElement('canvas');
-        const maxSize = 800;
+        // Increased max size for better quality while maintaining aspect ratio
+        const maxSize = 1200;
         const scale = Math.min(maxSize / img.width, maxSize / img.height);
         canvas.width = Math.floor(img.width * scale);
         canvas.height = Math.floor(img.height * scale);
@@ -42,6 +43,7 @@ export async function processImageCollage(
           return;
         }
 
+        // Draw image maintaining aspect ratio
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         const imageDataObj = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageDataObj.data;
@@ -101,7 +103,7 @@ export async function processImageCollage(
         }
 
         ctx.putImageData(imageDataObj, 0, 0);
-        const result = canvas.toDataURL('image/jpeg', 0.85);
+        const result = canvas.toDataURL('image/jpeg', 0.9); // Increased quality
 
         // Clean up
         canvas.width = 1;
