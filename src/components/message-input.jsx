@@ -334,8 +334,8 @@ export function MessageInput({ onSubmit }) {
     if (isProcessing || !selectedImage || !applyMerzh) return
     
     const value = parseInt(e.target.value)
-    // Convert slider value (0-100) to merzh width (1-32)
-    const newWidth = Math.max(1, Math.min(32, value))
+    // Convert slider value (1-32) to merzh width (2-64)
+    const newWidth = Math.pow(2, value)
     setMerzhWidth(newWidth)
     
     // Debounce the image processing
@@ -494,9 +494,9 @@ export function MessageInput({ onSubmit }) {
                   <input
                     type="range"
                     min="1"
-                    max="32"
+                    max="6"
                     step="1"
-                    value={merzhWidth}
+                    value={Math.log2(merzhWidth)}
                     onChange={handleMerzhWidthChange}
                     disabled={isProcessing}
                   />
