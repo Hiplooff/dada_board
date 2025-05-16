@@ -348,7 +348,7 @@ export function MessageInput({ onSubmit }) {
       <input
         className="input"
         type="text"
-        placeholder="Your name"
+        placeholder="NAME"
         value={author}
         onChange={e => setAuthor(e.target.value)}
         maxLength={50}
@@ -357,7 +357,7 @@ export function MessageInput({ onSubmit }) {
       />
       <textarea
         className="textarea"
-        placeholder="Write your message..."
+        placeholder="WORDS..."
         value={content}
         onChange={e => setContent(e.target.value)}
         maxLength={1000}
@@ -390,18 +390,6 @@ export function MessageInput({ onSubmit }) {
             </Button>
             {applyMerzh && (
               <>
-                <div className="merzh-label">PIXEL SIZE</div>
-                <div className="merzh-slider">
-                  <input
-                    type="range"
-                    min="1"
-                    max="32"
-                    step="1"
-                    value={merzhWidth}
-                    onChange={handleMerzhWidthChange}
-                    disabled={isProcessing}
-                  />
-                </div>
                 <div className="merzh-label">MERZH DIRECTION</div>
                 <div className="direction-toggle">
                   <button
@@ -420,6 +408,18 @@ export function MessageInput({ onSubmit }) {
                   >
                     <span>V</span>
                   </button>
+                </div>
+                <div className="merzh-label">PIXEL SIZE</div>
+                <div className="merzh-slider">
+                  <input
+                    type="range"
+                    min="1"
+                    max="32"
+                    step="1"
+                    value={merzhWidth}
+                    onChange={handleMerzhWidthChange}
+                    disabled={isProcessing}
+                  />
                 </div>
               </>
             )}
