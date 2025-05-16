@@ -9,6 +9,26 @@ function App() {
   const [error, setError] = useState(null)
   const [showInput, setShowInput] = useState(false)
 
+  // Handle browser back button
+  useEffect(() => {
+    const handlePopState = (event) => {
+      if (showInput) {
+        event.preventDefault()
+        setShowInput(false)
+        // Push a new state to prevent the browser from going back
+        window.history.pushState(null, '', window.location.href)
+      }
+    }
+
+    // Push initial state when input is shown
+    if (showInput) {
+      window.history.pushState(null, '', window.location.href)
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [showInput])
+
   // Initial messages
   const initialMessages = [
     {
