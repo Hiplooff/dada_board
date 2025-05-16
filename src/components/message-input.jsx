@@ -435,19 +435,23 @@ export function MessageInput({ onSubmit }) {
         maxLength={1000}
         disabled={isProcessing}
       />
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <label className="button secondary" style={{ margin: 0 }}>
-          <ImageIcon style={{ verticalAlign: 'middle' }} />
-          <input
-            type="file"
-            accept="image/*"
-            style={{ display: 'none' }}
-            onChange={handleImageChange}
-            disabled={isProcessing}
-          />
-        </label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <label className="button secondary" style={{ margin: 0 }}>
+            <ImageIcon style={{ verticalAlign: 'middle' }} />
+            <input
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleImageChange}
+              disabled={isProcessing}
+            />
+          </label>
+        </div>
         {selectedImage && previewImage && (
-          <img src={previewImage} alt="Preview" className="image-preview" style={{ maxWidth: '100%', maxHeight: '40vh' }} />
+          <div style={{ width: '100%', overflow: 'hidden' }}>
+            <img src={previewImage} alt="Preview" className="image-preview" />
+          </div>
         )}
         {selectedImage && (
           <div className="merzh-controls">
