@@ -212,36 +212,100 @@ export function MessageInput({ onSubmit }) {
     }
   }
 
+  const compressImage = async (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Calculate new dimensions while maintaining aspect ratio
+          const maxDimension = 2000; // Max width or height
+          if (width > height && width > maxDimension) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else if (height > maxDimension) {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Convert to blob with quality adjustment
+          canvas.toBlob((blob) => {
+            if (blob) {
+              // If still too large, reduce quality
+              if (blob.size > MAX_FILE_SIZE) {
+                canvas.toBlob((compressedBlob) => {
+                  if (compressedBlob) {
+                    resolve(compressedBlob);
+                  } else {
+                    reject(new Error('Failed to compress image'));
+                  }
+                }, 'image/jpeg', 0.7);
+              } else {
+                resolve(blob);
+              }
+            } else {
+              reject(new Error('Failed to compress image'));
+            }
+          }, 'image/jpeg', 0.9);
+        };
+        img.onerror = () => reject(new Error('Failed to load image'));
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+    });
+  };
+
   const handleImageChange = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-    if (!validateFile(file)) return
-    setSelectedImage(file)
-    setIsProcessing(true)
-    setError(null)
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      setError('Only JPEG, PNG, and GIF files are allowed');
+      return;
+    }
+
+    setSelectedImage(file);
+    setIsProcessing(true);
+    setError(null);
+
     try {
-      const reader = new FileReader()
+      // Compress the image if it's too large
+      const processedFile = file.size > MAX_FILE_SIZE ? 
+        await compressImage(file) : 
+        file;
+
+      const reader = new FileReader();
       reader.onload = async (e) => {
         try {
-          const imageData = e.target.result
-          setOriginalImageData(imageData)
-          await processImage(imageData)
+          const imageData = e.target.result;
+          setOriginalImageData(imageData);
+          await processImage(imageData);
         } catch (error) {
-          setError('Error processing image. Please try again.')
+          setError('Error processing image. Please try again.');
         } finally {
-          setIsProcessing(false)
+          setIsProcessing(false);
         }
-      }
+      };
       reader.onerror = () => {
-        setError('Error reading file. Please try again.')
-        setIsProcessing(false)
-      }
-      reader.readAsDataURL(file)
+        setError('Error reading file. Please try again.');
+        setIsProcessing(false);
+      };
+      reader.readAsDataURL(processedFile);
     } catch (error) {
-      setError('Error reading file. Please try again.')
-      setIsProcessing(false)
+      setError('Error processing image. Please try again.');
+      setIsProcessing(false);
     }
-  }
+  };
 
   const handleMerzhToggle = async () => {
     if (isProcessing || !selectedImage || !originalImageData) return
