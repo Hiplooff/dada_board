@@ -57,6 +57,30 @@ body {
   letter-spacing: 0.08em;
 }
 
+.message-card h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.message-text {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0.5rem 0;
+}
+
+.message-image-container {
+  margin-top: 1rem;
+  max-height: 400px;
+  overflow: hidden;
+}
+
+.message-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  max-height: 400px;
+}
+
 .input, .textarea {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -285,6 +309,32 @@ body {
 }
 
 @media (min-width: 701px) {
+  .board-container {
+    max-width: 600px;
+  }
+  
+  .message-card {
+    margin-bottom: 1.5rem;
+    padding: 1.2rem 1rem;
+  }
+  
+  .message-card h3 {
+    font-size: 1rem;
+  }
+  
+  .message-text {
+    font-size: 0.95rem;
+    margin: 0.4rem 0;
+  }
+  
+  .message-image-container {
+    max-height: 350px;
+  }
+  
+  .message-image {
+    max-height: 350px;
+  }
+  
   .popup-input {
     max-width: 500px;
     padding: 1.5rem 1rem 5rem 1rem;
