@@ -5,27 +5,21 @@ import { Textarea } from './ui/textarea'
 import { Send, Image as ImageIcon, X, Loader2, Download } from 'lucide-react'
 import { processImageCollage } from '../lib/image-processor'
 import { supabase } from '../lib/supabase'
+import {
+  MAX_AUTHOR_LENGTH,
+  MAX_CONTENT_LENGTH,
+  MAX_FILE_SIZE,
+  ALLOWED_FILE_TYPES,
+  RATE_LIMIT,
+  IMAGE_PREVIEW_MAX_SIZE,
+  IMAGE_MAX_DIMENSION
+} from '../lib/constants'
 
-// Constants for validation
-const MAX_AUTHOR_LENGTH = 50
-const MAX_CONTENT_LENGTH = 1000
-const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
-const ALLOWED_FILE_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/gif',
-  'image/webp',
-  'image/bmp',
-  'image/tiff',
-  'image/svg+xml'
-]
-
-// Rate limiting
-const RATE_LIMIT = {
-  messages: 10, // messages per minute
-  uploads: 5,   // uploads per minute
-}
-
+/**
+ * MessageInput component for creating and submitting messages with optional image upload
+ * @param {Object} props - Component props
+ * @param {Function} props.onSubmit - Callback function when message is submitted
+ */
 export function MessageInput({ onSubmit }) {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
@@ -202,8 +196,7 @@ export function MessageInput({ onSubmit }) {
       const img = new Image()
       img.onload = () => {
         const canvas = document.createElement('canvas')
-        const maxSize = 600 // Increased from 150 to 600 (4x)
-        const scale = Math.min(maxSize / img.width, maxSize / img.height)
+        const scale = Math.min(IMAGE_PREVIEW_MAX_SIZE / img.width, IMAGE_PREVIEW_MAX_SIZE / img.height)
         canvas.width = Math.floor(img.width * scale)
         canvas.height = Math.floor(img.height * scale)
         const ctx = canvas.getContext('2d')
@@ -216,7 +209,7 @@ export function MessageInput({ onSubmit }) {
       setProcessedImage(processed)
     } catch (error) {
       console.error('Error processing image:', error)
-      alert('Error processing image. Please try again.')
+      setError('Error processing image. Please try again.')
     }
   }
 
@@ -233,13 +226,12 @@ export function MessageInput({ onSubmit }) {
           let height = img.height;
           
           // Calculate new dimensions while maintaining aspect ratio
-          const maxDimension = 2000; // Max width or height
-          if (width > height && width > maxDimension) {
-            height = Math.round((height * maxDimension) / width);
-            width = maxDimension;
-          } else if (height > maxDimension) {
-            width = Math.round((width * maxDimension) / height);
-            height = maxDimension;
+          if (width > height && width > IMAGE_MAX_DIMENSION) {
+            height = Math.round((height * IMAGE_MAX_DIMENSION) / width);
+            width = IMAGE_MAX_DIMENSION;
+          } else if (height > IMAGE_MAX_DIMENSION) {
+            width = Math.round((width * IMAGE_MAX_DIMENSION) / height);
+            height = IMAGE_MAX_DIMENSION;
           }
           
           canvas.width = width;
