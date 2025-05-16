@@ -23,10 +23,12 @@ function App() {
     // Push initial state when input is shown
     if (showInput) {
       window.history.pushState(null, '', window.location.href)
+      window.addEventListener('popstate', handlePopState)
     }
 
-    window.addEventListener('popstate', handlePopState)
-    return () => window.removeEventListener('popstate', handlePopState)
+    return () => {
+      window.removeEventListener('popstate', handlePopState)
+    }
   }, [showInput])
 
   // Initial messages
