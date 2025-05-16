@@ -103,12 +103,12 @@ body {
   position: fixed;
   right: 2rem;
   bottom: 2rem;
-  width: 70px;
-  height: 48px;
+  width: 350px;
+  height: 240px;
   background: var(--button-bg);
   color: var(--button-fg);
   border: 2px solid var(--button-border);
-  font-size: 2.5rem;
+  font-size: 12.5rem;
   font-family: var(--font-main);
   font-weight: bold;
   text-transform: uppercase;
@@ -124,7 +124,7 @@ body {
 
 .fab span {
   transform: skew(20deg);
-  font-size: 2.2rem;
+  font-size: 11rem;
   font-family: var(--font-main);
   font-weight: bold;
   letter-spacing: 0.1em;
@@ -143,21 +143,20 @@ body {
   background: var(--background);
   border-top: 2px solid var(--border);
   box-shadow: none;
-  padding: 2rem 1rem 1.5rem 1rem;
+  padding: 2rem 1rem 6rem 1rem;
   z-index: 2000;
   max-width: 700px;
   margin: 0 auto;
   border-radius: 0;
-  overflow-y: auto;
-  max-height: 80vh;
+  max-height: 90vh;
 }
 
 .popup-form {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-  overflow-y: auto;
-  max-height: 80vh;
+  position: relative;
+  padding-bottom: 5rem;
 }
 
 .image-preview {
@@ -174,6 +173,7 @@ body {
   flex-direction: column;
   gap: 1.2rem;
   margin-top: 1rem;
+  width: 100%;
 }
 
 .merzh-label {
@@ -184,9 +184,11 @@ body {
 .direction-toggle {
   display: flex;
   gap: 1rem;
+  width: 100%;
 }
 
 .direction-toggle button {
+  flex: 1;
   min-width: 48px;
   padding: 0.7rem 1.2rem;
   border-radius: 0;
@@ -197,10 +199,12 @@ body {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  width: 100%;
 }
 
 .merzh-slider input[type="range"] {
-  width: 260px;
+  width: 100%;
+  max-width: 100%;
   accent-color: var(--foreground);
   background: var(--background);
   border: 2px solid var(--border);
@@ -251,7 +255,7 @@ body {
 .button[type="submit"] {
   position: absolute;
   right: 0;
-  bottom: -4.5rem;
+  bottom: 0;
   background: var(--send-bg);
   color: var(--send-fg);
   border: 2px solid var(--send-border);
@@ -262,6 +266,8 @@ body {
   padding: 1.1rem 2.5rem;
   border-radius: 0;
   box-shadow: none;
+  width: auto;
+  min-width: 120px;
 }
 
 .button[type="submit"]:hover {
@@ -286,10 +292,23 @@ body {
   .image-preview {
     max-height: 220px;
   }
+  .popup-input {
+    padding: 1.5rem 1rem 5rem 1rem;
+  }
   .button[type="submit"] {
     padding: 0.7rem 1.2rem;
     font-size: 1rem;
-    bottom: -3.5rem;
+    min-width: 100px;
+  }
+  .merzh-controls {
+    gap: 1rem;
+  }
+  .direction-toggle {
+    gap: 0.5rem;
+  }
+  .direction-toggle button {
+    padding: 0.5rem 0.8rem;
+    font-size: 1rem;
   }
 }
 
@@ -326,4 +345,15 @@ body {
   body {
     overflow-x: hidden !important;
   }
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  text-align: center;
+  margin: 2rem 0;
+  font-family: var(--font-main);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
