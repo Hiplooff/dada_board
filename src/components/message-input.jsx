@@ -264,20 +264,48 @@ export function MessageInput({ onSubmit }) {
     }
   }
 
+  let processingTimeout
+
   const handleMerzhWidthChange = async (e) => {
-    if (isProcessing || !selectedImage || !originalImageData) return
-    setIsProcessing(true)
-    const newWidth = parseInt(e.target.value)
+    if (isProcessing || !selectedImage || !applyMerzh) return
+    
+    const value = parseInt(e.target.value)
+    // Convert slider value (0-100) to merzh width (1-32)
+    const newWidth = Math.max(1, Math.min(32, value))
     setMerzhWidth(newWidth)
     
-    try {
-      await processImage(originalImageData)
-    } catch (error) {
-      console.error('Error updating Merzh effect:', error)
-      setError('Error updating effect. Please try again.')
-    } finally {
-      setIsProcessing(false)
+    // Debounce the image processing
+    if (processingTimeout) {
+      clearTimeout(processingTimeout)
     }
+    
+    processingTimeout = setTimeout(async () => {
+      setIsProcessing(true)
+      try {
+        const reader = new FileReader()
+        reader.onload = async (e) => {
+          try {
+            const imageData = e.target.result
+            await processImage(imageData)
+          } catch (error) {
+            console.error('Error processing image:', error)
+            setError('Error processing image. Please try again.')
+          } finally {
+            setIsProcessing(false)
+          }
+        }
+        reader.onerror = () => {
+          console.error('Error reading file')
+          setError('Error reading file. Please try again.')
+          setIsProcessing(false)
+        }
+        reader.readAsDataURL(selectedImage)
+      } catch (error) {
+        console.error('Error reading file:', error)
+        setError('Error reading file. Please try again.')
+        setIsProcessing(false)
+      }
+    }, 150) // 150ms debounce
   }
 
   const handleDirectionToggle = async () => {
@@ -366,9 +394,9 @@ export function MessageInput({ onSubmit }) {
                 <div className="merzh-slider">
                   <input
                     type="range"
-                    min="2"
-                    max="40"
-                    step="2"
+                    min="1"
+                    max="32"
+                    step="1"
                     value={merzhWidth}
                     onChange={handleMerzhWidthChange}
                     disabled={isProcessing}
