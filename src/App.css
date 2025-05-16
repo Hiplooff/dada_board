@@ -193,6 +193,38 @@ body {
   border: 2px solid var(--border);
   border-radius: 0;
   margin-bottom: 1rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.image-preview-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.download-icon {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  background: var(--background);
+  color: var(--foreground);
+  border: 2px solid var(--border);
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.download-icon:hover {
+  background: var(--foreground);
+  color: var(--background);
 }
 
 .merzh-controls {
@@ -376,7 +408,8 @@ body {
     font-size: 2rem;
   }
   .image-preview {
-    max-height: 220px;
+    max-height: 300px;
+    width: 100%;
   }
   .popup-input {
     padding: 1.5rem 1rem 5rem 1rem;
@@ -395,6 +428,13 @@ body {
   .direction-toggle button {
     padding: 0.5rem 0.8rem;
     font-size: 1rem;
+  }
+  .input, .textarea {
+    font-size: 1.1rem;
+    padding: 0.8rem 1rem;
+  }
+  .textarea {
+    min-height: 120px;
   }
 }
 
